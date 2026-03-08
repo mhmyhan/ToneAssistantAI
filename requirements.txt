@@ -1,0 +1,6 @@
+pedalboard
+librosa
+numpy
+pandas
+soundfile
+tqdm
