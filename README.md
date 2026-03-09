@@ -1,3 +1,9 @@
+
+Run dataset generation in terminal with: 
+
+python src/dataset_generation/generate_dataset.py
+
+
 Bibtex Reference
 
 pedalboard:

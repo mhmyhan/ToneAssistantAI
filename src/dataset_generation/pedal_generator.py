@@ -10,35 +10,20 @@ from pedalboard import (
 )
 from pedalboard.io import AudioFile
 
-# list of potential effects pedals to be drawn upon for dataset generation
+# list of potential effects pedals to be drawn upon for each chain
+# (maybe expand later to include more effects)
 PEDALS = [
-    "Compression",
-    "Overdrive",
-    "Distortion",
-    "Chorus",
-    "Delay",
-    "Reverb"
+    "compressor",
+    "overdrive",
+    "distortion",
+    "chorus",
+    "delay",
+    "reverb"
     ]
 
 
 
 ## FUNCTIONS ##
-
-
-def process_audio(input_file, output_file, chain):
-
-    effects = [e for e in chain if e is not None]
-
-    board = Pedalboard(effects)
-
-
-    with AudioFile(input_file) as f:
-
-        audio = f.read(f.frames)
-        effected = board(audio, f.samplerate)
-        
-        with AudioFile(output_file, 'w', f.samplerate, effected.shape[0]) as o:
-            o.write(effected)
 
 # Maps pedal names to their respective effects pedals+params
 def create_pedal_effect(pedal, params):
@@ -65,11 +50,38 @@ def create_pedal_effect(pedal, params):
 
     return None
 
-# randomly selects a maximum of 3 pedals in any order, returns list[] of strings
-def generate_chain(max_length=3):
+# randomly selects pedals in a defined order, returns list[] of strings
+# generates randomly ristricted to most likely pedal chains, but with some variability to avoid overfitting
+def generate_chain():
 
-    length = rand.randint(0, max_length)
-    return rand.sample(PEDALS, length)
+    chain = []
+
+    # compressor (optional)
+    if rand.random() < 0.4:
+        chain.append("compressor")
+
+    # drive stage (very common)
+    if rand.random() < 0.8:
+        chain.append(rand.choice(["overdrive", "distortion"]))
+
+    # modulation
+    if rand.random() < 0.35:
+        chain.append("chorus")
+
+    # delay
+    if rand.random() < 0.45:
+        chain.append("delay")
+
+    # reverb
+    if rand.random() < 0.35:
+        chain.append("reverb")
+
+    # ensure at least ONE pedal
+    if len(chain) == 0:
+        chain.append(rand.choice(["compressor", "overdrive", "distortion"]))
+
+    return chain
+
 
 
 # generates random parameters relative to each pedal type, returns dict{} of parameter names and values
