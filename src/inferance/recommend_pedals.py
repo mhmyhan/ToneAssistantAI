@@ -3,6 +3,7 @@ import json
 from model.tone_model import ToneCNN
 from dataset.feature_extractor import extract_mel_spectrogram
 
+# list with pedal names in same order as model output for mapping predictions to pedal names
 pedal_names = [
     "compressor",
     "overdrive",

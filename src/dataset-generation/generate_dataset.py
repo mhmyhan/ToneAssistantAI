@@ -7,11 +7,12 @@ from pedal_generator import generate_chain, generate_parameters, create_pedal_ef
 from pedalboard.io import AudioFile
 from pedalboard import Pedalboard
 
-DI_FOLDER = "data/audio-raw"
-OUTPUT_FOLDER = "data/audio-generated"
+DI_FOLDER = "data/di"
+OUTPUT_FOLDER = "data/generated/audio"
 LABEL_FILE = "data/labels/dataset_labels.csv"
 
-SAMPLES_PER_RIFF = 100
+#less samples for testing, change to ~100-400 for model training
+SAMPLES_PER_RIFF = 5
 
 
 
