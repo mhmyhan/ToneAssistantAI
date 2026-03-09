@@ -1,0 +1,16 @@
+file,source_di,pedals
+Chords_distortion_0.wav,Chords.wav,distortion
+Chords_compressor_overdrive_chorus_1.wav,Chords.wav,"compressor,overdrive,chorus"
+Chords_compressor_overdrive_delay_reverb_2.wav,Chords.wav,"compressor,overdrive,delay,reverb"
+Chords_overdrive_chorus_3.wav,Chords.wav,"overdrive,chorus"
+Chords_compressor_distortion_chorus_reverb_4.wav,Chords.wav,"compressor,distortion,chorus,reverb"
+Riff1_compressor_overdrive_5.wav,Riff1.wav,"compressor,overdrive"
+Riff1_distortion_chorus_6.wav,Riff1.wav,"distortion,chorus"
+Riff1_chorus_delay_7.wav,Riff1.wav,"chorus,delay"
+Riff1_overdrive_8.wav,Riff1.wav,overdrive
+Riff1_distortion_chorus_9.wav,Riff1.wav,"distortion,chorus"
+Riff2_compressor_overdrive_10.wav,Riff2.wav,"compressor,overdrive"
+Riff2_compressor_11.wav,Riff2.wav,compressor
+Riff2_compressor_overdrive_chorus_reverb_12.wav,Riff2.wav,"compressor,overdrive,chorus,reverb"
+Riff2_compressor_distortion_delay_13.wav,Riff2.wav,"compressor,distortion,delay"
+Riff2_distortion_delay_14.wav,Riff2.wav,"distortion,delay"
