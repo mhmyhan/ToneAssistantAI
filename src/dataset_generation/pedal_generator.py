@@ -29,24 +29,38 @@ PEDALS = [
 def create_pedal_effect(pedal, params):
 
     if pedal == "compressor":
-        return Compressor(**params)
+        return Compressor(
+            threshold_db=params["threshold_db"],
+            ratio=params["ratio"]
+        )
 
-    # overdrive is just distortion with a lower drive setting
-    if pedal == "overdrive": 
-        return Distortion(**params)
+    if pedal == "overdrive":
+        return Distortion(
+            drive_db=params["drive"] * 30
+        )
 
-    # we'll define distiortion as drive above a minimum threshold
     if pedal == "distortion":
-        return Distortion(drive=0.9)
+        return Distortion(
+            drive_db=35
+        )
 
     if pedal == "chorus":
-        return Chorus(**params)
+        return Chorus(
+            rate_hz=params["rate_hz"],
+            depth=params["depth"]
+        )
 
     if pedal == "delay":
-        return Delay(**params)
+        return Delay(
+            delay_seconds=params["delay_seconds"],
+            feedback=params["feedback"],
+            mix=params["mix"]
+        )
 
     if pedal == "reverb":
-        return Reverb(**params)
+        return Reverb(
+            room_size=params["room_size"]
+        )
 
     return None
 
