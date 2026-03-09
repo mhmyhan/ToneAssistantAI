@@ -59,6 +59,7 @@ def main():
                 "pedals": ",".join(pedal_names)
             })
 
+            print(f"Generated {output_name} with pedals: {', '.join(pedal_names)}")
             sample_id += 1
 
     df = pd.DataFrame(labels)
