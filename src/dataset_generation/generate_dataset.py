@@ -1,5 +1,5 @@
 import os
-import json
+import json # for sending to cubase midi API later.
 import pandas as pd
 from tqdm import tqdm
 
@@ -11,11 +11,24 @@ DI_FOLDER = "data/di"
 OUTPUT_FOLDER = "data/generated/audio"
 LABEL_FILE = "data/labels/dataset_labels.csv"
 
-#less samples for testing, change to ~100-400 for model training
+#less samples for testing(5), change to ~100-400 for model training
 SAMPLES_PER_RIFF = 5
 
+## FUNC ##
+def process_audio(input_file, output_file, effects):
 
+    board = Pedalboard(effects)
 
+    with AudioFile(input_file) as f:
+
+        audio = f.read(f.frames)
+
+        effected = board(audio, f.samplerate)
+
+    with AudioFile(output_file, 'w', f.samplerate, effected.shape[0]) as o:
+        o.write(effected)
+
+## MAIN ##
 def main():
 
     os.makedirs(OUTPUT_FOLDER, exist_ok=True)
@@ -26,11 +39,12 @@ def main():
 
     sample_id = 0
 
+    # Iterate through di files in DI_FOLDER, genereate chains*SAMPLES_PER_RIFF
     for di_file in di_files:
 
         input_path = os.path.join(DI_FOLDER, di_file)
 
-        for i in tqdm(range(SAMPLES_PER_RIFF)):
+        for i in tqdm(range(SAMPLES_PER_RIFF), desc=di_file):
 
             chain = generate_chain()
 
@@ -48,7 +62,13 @@ def main():
                     effects.append(effect)
                     pedal_names.append(pedal)
 
-            output_name = f"sample_{sample_id}.wav"
+            # naming logic for generated files based on di file name and pedals used
+            di_name = os.path.splitext(di_file)[0]
+
+            pedal_tag = "_".join(pedal_names) if pedal_names else "clean"
+
+            output_name = f"{di_name}_{pedal_tag}_{sample_id}.wav"
+
 
             output_path = os.path.join(OUTPUT_FOLDER, output_name)
 
@@ -56,6 +76,7 @@ def main():
 
             labels.append({
                 "file": output_name,
+                "source_di": di_file,
                 "pedals": ",".join(pedal_names)
             })
 
@@ -69,15 +90,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-def process_audio(input_file, output_file, effects):
-
-    board = Pedalboard(effects)
-
-    with AudioFile(input_file) as f:
-
-        audio = f.read(f.frames)
-        effected = board(audio, f.samplerate)
-
-        with AudioFile(output_file, 'w', f.samplerate, effected.shape[0]) as o:
-            o.write(effected)
