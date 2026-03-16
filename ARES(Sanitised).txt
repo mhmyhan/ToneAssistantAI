@@ -1,4 +1,4 @@
-CPU-Z TXT Report - SANITIZED FOR AUDIO PROCESSING ANALYSIS
+CPU-Z TXT Report - SANITIZED TO AUDIO PROCESSING ANALYTICS
 -------------------------------------------------------------------------
 
 Processor Information
