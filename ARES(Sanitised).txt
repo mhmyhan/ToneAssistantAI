@@ -1,0 +1,111 @@
+CPU-Z TXT Report - SANITIZED FOR AUDIO PROCESSING ANALYSIS
+-------------------------------------------------------------------------
+
+Processor Information
+-------------------------------------------------------------------------
+
+Socket 1			ID = 0
+	Number of cores		14 (max 14)
+	Number of threads	20 (max 20)
+	Hybrid			yes, 2 coresets
+	Core Set 0		P-Cores, 6 cores, 12 threads
+	Core Set 1		E-Cores, 8 cores, 8 threads
+	Manufacturer		GenuineIntel
+	Name			Intel Core i5 14600KF
+	Codename		Raptor Lake
+	Specification		Intel(R) Core(TM) i5-14600KF
+	Technology		10 nm
+	TDP Limit		125.0 Watts
+	Tjmax			100.0 °C
+	Core Speed		4000.0 MHz
+	Multiplier x Bus Speed	40.0 x 100.0 MHz
+	Base frequency (cores)	100.0 MHz
+	Stock frequency		3500 MHz
+	Max frequency		5300 MHz
+	Instructions sets	MMX, SSE, SSE2, SSE3, SSSE3, SSE4.1, SSE4.2, EM64T, VT-x, AES, AVX, AVX2, FMA3, SHA
+	Microcode Revision	0x12B
+	L1 Data cache		6 x 48 KB (12-way, 64-byte line) + 8 x 32 KB (8-way, 64-byte line)
+	L1 Instruction cache	6 x 32 KB (8-way, 64-byte line) + 8 x 64 KB (8-way, 64-byte line)
+	L2 cache		6 x 2 MB (16-way, 64-byte line) + 2 x 4 MB (16-way, 64-byte line)
+	L3 cache		24 MB (12-way, 64-byte line)
+
+	Turbo Mode		supported, enabled
+	Max non-turbo ratio	35x
+	Max turbo ratio		53x
+	Max efficiency ratio	8x
+	Ratio 1 P-Core		53x
+	Ratio 2 P-Cores		53x
+	Ratio 3 P-Cores		53x
+	Ratio 4 P-Cores		53x
+	Ratio 5 P-Cores		53x
+	Ratio 6 P-Cores		53x
+	Ratio 1 E-Core		40x
+	Ratio 2 E-Cores		40x
+	Ratio 3 E-Cores		40x
+	Ratio 4 E-Cores		40x
+
+	Temperature 0		51 degC (123 degF) (Package)
+	Temperature 1		44 degC (111 degF) (P-Cores (Max))
+	Temperature 2		50 degC (122 degF) (E-Cores (Max))
+	Power 00		38.10 W (Package)
+	Power 01		36.78 W (IA Cores)
+
+	Core 0 max ratio	53.00 (effective 53.00) (P-Core)
+	Core 1 max ratio	53.00 (effective 53.00) (P-Core)
+	Core 2 max ratio	53.00 (effective 53.00) (P-Core)
+	Core 3 max ratio	53.00 (effective 53.00) (P-Core)
+	Core 4 max ratio	53.00 (effective 53.00) (P-Core)
+	Core 5 max ratio	53.00 (effective 53.00) (P-Core)
+	Core 6 max ratio	40.00 (effective 40.00) (E-Core)
+	Core 7 max ratio	40.00 (effective 40.00) (E-Core)
+	Core 8 max ratio	40.00 (effective 40.00) (E-Core)
+	Core 9 max ratio	40.00 (effective 40.00) (E-Core)
+	Core 10 max ratio	40.00 (effective 40.00) (E-Core)
+	Core 11 max ratio	40.00 (effective 40.00) (E-Core)
+	Core 12 max ratio	40.00 (effective 40.00) (E-Core)
+	Core 13 max ratio	40.00 (effective 40.00) (E-Core)
+
+
+Memory Information (Can Affect Audio Latency)
+-------------------------------------------------------------------------
+
+Memory Type			DDR5
+Memory Size			32 GBytes
+Channels			4 x 32-bit
+Memory Frequency		2400.0 MHz (1:24)
+CAS# latency (CL)		40.0
+RAS# to CAS# delay (tRCD)	40
+RAS# Precharge (tRP)		40
+Cycle Time (tRAS)		76
+Bank Cycle Time (tRC)		116
+Command Rate (CR)		2T
+Uncore Frequency		4600.0 MHz
+
+Memory SPD Summary
+	Type			DDR5
+	Format			UDIMM
+	Manufacturer		Corsair
+	Size			16384 MBytes (x2 modules)
+	Max bandwidth		DDR5-5600 (2800 MHz)
+	XMP profile		XMP-5600 supported
+
+Audio Devices (For IN-OUT Live Audio)
+-------------------------------------------------------------------------
+
+USB Device			UA-25EX, class=0xFF, subclass=0x00, vendor=0x0582, product=0x00E6 (Audio Interface)
+USB Device			USB Input Device, class=0x00, subclass=0x00, vendor=0x048D, product=0x5702 (MIDI/Controller)
+USB Device			Intel(R) Wireless Bluetooth(R), class=0xE0, subclass=0x01, vendor=0x8087, product=0x0033 (Bluetooth Audio technically possible but not reccommended{high latency})
+
+High Definition Audio (HDA) Controller
+	Location		bus 0, device 31, function 3
+	Vendor			Intel
+
+High Definition Audio (HDA) (GPU Audio)
+	Location		bus 1, device 0, function 1
+	Vendor			NVIDIA
+
+Software Environment
+-------------------------------------------------------------------------
+
+Windows Version			Microsoft Windows 11 (10.0) Home 64-bit (Build 26100)
+DirectX Version			12.0
