@@ -2,11 +2,16 @@ import sounddevice as sd
 from pedalboard import Pedalboard, Compressor, Distortion, Chorus, Delay, Reverb
 import numpy as np
 
-sample_rate = 44100
-block_size = 512
+print("Initialising live...")
+
+print(sd.query_devices())
+
+# both majoritively determine latency and quality of audio (adjust to system requirements)
+sample_rate = 44100 # in Hz     (lower = more latency but less CPU usage)
+block_size = 256 # in samples   (lower = less latency but more CPU usage)
 
 # example pedalboard setup that can be controlled using ToneAsst Later
-board = Pedalboard([
+demoboard = Pedalboard([
     Compressor(threshold_db=-20, ratio=3),
     Distortion(drive_db=25),
     Chorus(rate_hz=1.5, depth=0.4),
@@ -22,7 +27,7 @@ def audio_callback(indata, outdata, frames, time, status):
     # Process the audio through the pedalboard
     audio = indata.T
 
-    processed = board(audio, sample_rate)
+    processed = demoboard(audio, sample_rate)
 
     outdata[:] = processed.T
 
