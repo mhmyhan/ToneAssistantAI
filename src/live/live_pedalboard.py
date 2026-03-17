@@ -1,50 +1,23 @@
 import sounddevice as sd
-from pedalboard import Pedalboard, Compressor, Distortion, Chorus, Delay, Reverb
 import numpy as np
+
+from audio.audio_engine import create_callback
+from audio.pedalboard_builder import build_demo_board
+
+from config.audio_config import SAMPLE_RATE, BLOCK_SIZE, INPUT_DEVICE_ID, OUTPUT_DEVICE_ID, INPUT_CHANNEL
+
 
 print("Initialising live...")
 
-# use this command (use testing.ipynb) to find your input and output device IDs
-# print(sd.query_devices())
-
-input_id = 1 # change to your audio input device ID (see testing.ipynb)
-output_id = 11 # change to your audio output device ID (see testing.ipynb)
-
-# these majoritively determine latency and quality of audio (adjust to system requirements)
-sample_rate = 44100 # in Hz     (lower = more latency but less CPU usage)
-block_size = 512 # in samples   (lower = less latency but more CPU usage)
-
-# example pedalboard setup that can be controlled using ToneAsst Later
-demoboard = Pedalboard([
-    Compressor(threshold_db=-20, ratio=3),
-    Distortion(drive_db=25),
-    Chorus(rate_hz=1.5, depth=0.4),
-    Delay(delay_seconds=0.35, feedback=0.4, mix=0.3),
-    Reverb(room_size=0.5)
-])
-
-
-def audio_callback(indata, outdata, frames, time, status):
-    if status:
-        print(status)
-
-    right_channel = indata[:, 1] #input 2 (right) us used for processing
-
-    # Process the audio through the pedalboard
-    audio = right_channel.reshape(1, -1) # adjust shape to right channel exclusive
-
-    processed = demoboard(audio, sample_rate)
-
-    out = np.repeat(processed.T, 2, axis=1) # duplicate processed signal into stereo
-
-    outdata[:] = out
+# create callback function for processing audio from template in audio_engine.py
+audio_callback = create_callback(build_demo_board())
 
 with sd.Stream(
-    samplerate=sample_rate,
-    blocksize=block_size,
+    samplerate=SAMPLE_RATE,
+    blocksize=BLOCK_SIZE,
     channels=(2, 2), # 2 input & 2 output channels
     callback=audio_callback,
-    device=(input_id, output_id)):
+    device=(INPUT_DEVICE_ID, OUTPUT_DEVICE_ID)):
 
     print("Live pedalboard is running. Ctrl+C to exit.")
 
