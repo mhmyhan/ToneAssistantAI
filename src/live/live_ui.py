@@ -53,6 +53,9 @@ def set_delay(value):
 def toggle_monitoring():
     global monitoring_enabled
     monitoring_enabled = not monitoring_enabled
+    print("monitoring:", "ON" if monitoring_enabled else "OFF")
+
+
 
 def main():
     root = tk.Tk()
@@ -62,22 +65,36 @@ def main():
     stop_button = tk.Button(root, text="Stop", command=stop_audio)
     stop_button.pack()
 
+    # Distortion drive slider
     drive_slider = tk.Scale(root, from_=0, to=40,
                             label="Distortion Drive (dB)",
                             orient=tk.HORIZONTAL,
                             command=set_drive)
-
     drive_slider.set(0.3) # default value
     drive_slider.pack()
 
+    # Delay mix slider
     delay_slider = tk.Scale(root, from_=0, to=1,
                             resolution=0.01,
                             label="Delay Mix",
                             orient=tk.HORIZONTAL,
                             command=set_delay)
-
     delay_slider.set(25)
     delay_slider.pack()
+
+    # monitoring button
+    monitor_var = tk.BooleanVar(value=True)
+
+    def update_monitoring():
+        global monitoring_enabled
+        monitoring_enabled = monitor_var.get()
+
+    monitor_checkbox = tk.Checkbutton(root, text="Monitoring ON",
+                                    variable=monitor_var,
+                                    command=update_monitoring)
+
+    monitor_checkbox.pack()
+
 
     root.mainloop()
 
