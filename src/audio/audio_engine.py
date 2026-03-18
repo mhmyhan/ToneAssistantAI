@@ -1,5 +1,5 @@
 import numpy as np
-from config.audio_config import SAMPLE_RATE, INPUT_CHANNEL
+from src.config.audio_config import SAMPLE_RATE, INPUT_CHANNEL
 
 
 # Callback function that processes audio through pedalboard in realtime

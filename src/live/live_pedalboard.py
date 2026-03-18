@@ -1,10 +1,9 @@
 import sounddevice as sd
 import numpy as np
 
-from audio.audio_engine import create_callback
-from audio.pedalboard_builder import build_demo_board
-
-from config.audio_config import SAMPLE_RATE, BLOCK_SIZE, INPUT_DEVICE_ID, OUTPUT_DEVICE_ID, INPUT_CHANNEL
+from src.audio.audio_engine import create_callback
+from src.audio.pedalboard_builder import build_demo_board
+from src.config.audio_config import SAMPLE_RATE, BLOCK_SIZE, INPUT_DEVICE_ID, OUTPUT_DEVICE_ID, INPUT_CHANNEL
 
 
 print("Initialising live...")

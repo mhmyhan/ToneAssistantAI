@@ -1,1 +1,4 @@
-from src.live.live_pedalboard_ui import main
+from src.live.live_ui import main
+
+if __name__ == "__main__":
+    main()
