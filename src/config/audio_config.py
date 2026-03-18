@@ -4,6 +4,8 @@
 SAMPLE_RATE = 44100 # in Hz      (lower = more latency but less CPU usage)
 BLOCK_SIZE = 512    # in samples (lower = less latency but more CPU usage)
 
+# dynamically find device id based on name
+# set to your audio interface name (in my case "UA-25EX" in and out)
 def find_device_id(device_name):
     import sounddevice as sd
     devices = sd.query_devices()
@@ -18,4 +20,5 @@ INPUT_DEVICE_ID = find_device_id("UA-25EX")     # UA-25EX input
 OUTPUT_DEVICE_ID = find_device_id("UA-25EX")   # UA-25EX output
 
 INPUT_CHANNEL = 1 # input 2 (right)
+
 

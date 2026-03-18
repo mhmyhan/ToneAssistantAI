@@ -8,7 +8,7 @@ from src.audio.audio_engine import create_callback
 from src.config.audio_config import SAMPLE_RATE, BLOCK_SIZE, INPUT_DEVICE_ID, OUTPUT_DEVICE_ID, INPUT_CHANNEL
 
 
-board = build_demo_board()
+board, pedals = build_demo_board()
 
 stream = None
 
@@ -37,11 +37,22 @@ def stop_audio():
         stream.stop()
         stream.close()
 
+## list structure:
+# board[0] = compressor
+# board[1] = distortion
+# board[2] = chorus
+# board[3] = delay
+# board[4] = reverb
+
 def set_drive(value):
-    board.effects[1].drive_db = float(value)
+    pedals["distortion"].drive_db = float(value)
 
 def set_delay(value):
-    board.effects[3].delay_seconds = float(value)
+    pedals["delay"].mix = float(value)
+
+def toggle_monitoring():
+    global monitoring_enabled
+    monitoring_enabled = not monitoring_enabled
 
 def main():
     root = tk.Tk()

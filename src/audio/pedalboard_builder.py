@@ -27,4 +27,12 @@ def build_demo_board():
         room_size=0.5
     )
 
-    return Pedalboard([comp, dist, chorus, delay, reverb])
+    board = Pedalboard([comp, dist, chorus, delay, reverb])
+
+    return board, {
+        "compressor": comp,
+        "distortion": dist,
+        "chorus": chorus,
+        "delay": delay,
+        "reverb": reverb
+    }
