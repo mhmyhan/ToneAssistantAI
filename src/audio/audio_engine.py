@@ -6,23 +6,30 @@ from src.config.audio_config import SAMPLE_RATE, INPUT_CHANNEL
 
 monitoring_enabled = True # global flag to enable/disable audio monitoring
 
-def create_callback(board):
+def create_callback(board, level_callback=None):
 
     def audio_callback(indata, outdata, frames, time, status):
+
         if status:
             print(status)
 
-        right_channel = indata[:, INPUT_CHANNEL] #input 2 (right) us used for processing
+        channel = indata[:, 1]
 
-        # Process the audio through the pedalboard
-        audio = right_channel.reshape(1, -1) # adjust shape to right channel exclusive
+        level = float((channel**2).mean() ** 0.5)
+
+        if level_callback:
+            level_callback(level)
+
+        audio = channel.reshape(1, -1)
 
         processed = board(audio, SAMPLE_RATE)
 
-        out = np.repeat(processed.T, 2, axis=1) # duplicate processed signal into stereo
+        out = np.repeat(processed.T, 2, axis=1)
 
+        # Monitoring control
+        from src.live.live_ui import monitoring_enabled
         if not monitoring_enabled:
-            out *= 0 # mute output if monitoring is disabled
+            out *= 0
 
         outdata[:] = out
 
