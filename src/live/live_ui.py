@@ -4,16 +4,17 @@ import tkinter as tk
 
 from src.audio.pedalboard_builder import build_demo_board
 from src.audio.audio_engine import create_callback
-from src.config.audio_config import (
-    SAMPLE_RATE,
-    BLOCK_SIZE,
-    INPUT_DEVICE_ID,
-    OUTPUT_DEVICE_ID
-)
+from src.audio.audio_stream import AudioStream
+from src.config.audio_config import (AUDIO_CONFIGS, INPUT_DEVICE_ID, OUTPUT_DEVICE_ID)
 
 
-# Build board + pedal references
-board, pedals = build_demo_board()
+# Build board + pedal references 
+board, pedals = build_demo_board() # currently hardcoded demo board
+
+config = AUDIO_CONFIGS["safe_mode"]
+config["device"] = (INPUT_DEVICE_ID, OUTPUT_DEVICE_ID)
+
+audio_stream = AudioStream(create_callback(board), config)
 
 stream = None
 
@@ -27,31 +28,17 @@ def update_level(level):
     global audio_level
     audio_level = level
 
+def get_monitoring():
+    return monitoring_enabled
 
-# Create audio callback with level tracking
-audio_callback = create_callback(board, update_level)
 
-
+# start and stop button functions
 def start_audio():
-    global stream
-
-    stream = sd.Stream(
-        samplerate=SAMPLE_RATE,
-        blocksize=BLOCK_SIZE,
-        device=(INPUT_DEVICE_ID, OUTPUT_DEVICE_ID),
-        channels=(2, 2),
-        callback=audio_callback
-    )
-
-    stream.start()
+    audio_stream.start()
 
 def stop_audio():
-    global stream
+    audio_stream.stop()
 
-    if stream is not None:
-        stream.stop()
-        stream.close()
-        stream = None
 
 
 # Pedal controls
@@ -79,7 +66,37 @@ def main():
     tk.Button(root, text="Start", command=start_audio).pack()
     tk.Button(root, text="Stop", command=stop_audio).pack()
 
-    tk.Button(root, text="Toggle Monitoring", command=toggle_monitoring).pack()
+    # audio status label
+    status_label = tk.Label(root, text="No Signal")
+    status_label.pack()
+
+    def update_status():
+        if audio_level > 0.01:
+            status_label.config(text="Playing")
+        else:
+            status_label.config(text="Silence")
+
+        root.after(100, update_status)
+
+    update_status()
+
+
+    # monitoring toggle
+    monitor_var = tk.BooleanVar(value=True)
+
+    def update_monitoring():
+        global monitoring_enabled
+        monitoring_enabled = monitor_var.get()
+
+    monitor_checkbox = tk.Checkbutton(
+        root,
+        text="Monitoring",
+        variable=monitor_var,
+        command=update_monitoring
+    )
+
+    monitor_checkbox.pack()
+
 
     # Distortion
     drive_slider = tk.Scale(
@@ -125,7 +142,7 @@ def main():
         root.after(50, update_vu)
 
     update_vu()
-
+ 
     root.mainloop()
 
 

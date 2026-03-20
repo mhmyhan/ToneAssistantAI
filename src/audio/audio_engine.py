@@ -6,7 +6,8 @@ from src.config.audio_config import SAMPLE_RATE, INPUT_CHANNEL
 
 monitoring_enabled = True # global flag to enable/disable audio monitoring
 
-def create_callback(board, level_callback=None):
+
+def create_callback(board, level_callback=None, monitor_callback=None):
 
     def audio_callback(indata, outdata, frames, time, status):
 
@@ -26,9 +27,7 @@ def create_callback(board, level_callback=None):
 
         out = np.repeat(processed.T, 2, axis=1)
 
-        # Monitoring control
-        from src.live.live_ui import monitoring_enabled
-        if not monitoring_enabled:
+        if monitor_callback and not monitor_callback():
             out *= 0
 
         outdata[:] = out
