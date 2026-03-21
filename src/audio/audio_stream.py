@@ -1,10 +1,16 @@
 import sounddevice as sd
 
+
+class BaseAudioBackend:
+    def start(self): pass
+    def stop(self): pass
+
 # This class centralises audio stream management, allowing for easy start/stop UI integration
 class AudioStream:
-    def __init__(self, callback, config):
+    def __init__(self, callback, config, monitor_callback=None):
         self.callback = callback
         self.config = config
+        self.monitor_callback = monitor_callback
         self.stream = None
 
     def start(self):

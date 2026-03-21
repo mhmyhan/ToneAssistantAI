@@ -19,10 +19,16 @@ python src/dataset_generation/generate_dataset.py
 - check requirements.txt for python packages
 
 ### RUN
-Run live Pedalboard feed using:
+
+Run program UI using:
+
+python run_app.py
+
+
+Run live Pedalboard feed raw using:
 
 python src/live/live_pedalboard.py
-
+(For debugging audio array processing)
 ### Latency
 Ideally runs with a latency < 10ms
 
@@ -30,6 +36,7 @@ Latency is dependent the response period of the processing cycle:
 
 Audio Interface Input -> Pedalboard Processing -> Audio Interface Output
 
+Depending on audio engine used (ASIO for best results)
 - block_size (sample size)
   - 256  -> ~6ms
   - 512  -> ~11ms

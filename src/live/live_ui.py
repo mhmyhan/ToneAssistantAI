@@ -8,21 +8,6 @@ from src.audio.audio_stream import AudioStream
 from src.config.audio_config import (AUDIO_CONFIGS, INPUT_DEVICE_ID, OUTPUT_DEVICE_ID)
 
 
-# Build board + pedal references 
-board, pedals = build_demo_board() # currently hardcoded demo board
-
-config = AUDIO_CONFIGS["safe_mode"]
-config["device"] = (INPUT_DEVICE_ID, OUTPUT_DEVICE_ID)
-
-audio_stream = AudioStream(create_callback(board), config)
-
-stream = None
-
-# Shared state
-audio_level = 0
-monitoring_enabled = True
-
-
 # Audio Level Callback
 def update_level(level):
     global audio_level
@@ -55,8 +40,24 @@ def toggle_monitoring():
     global monitoring_enabled
     monitoring_enabled = not monitoring_enabled
 
-
 ## UI ##
+# Build board + pedal references 
+board, pedals = build_demo_board() # currently hardcoded demo board
+
+config = AUDIO_CONFIGS["safe_mode"]
+config["device"] = (INPUT_DEVICE_ID, OUTPUT_DEVICE_ID)
+
+
+stream = None
+
+# Shared state
+audio_level = 0
+monitoring_enabled = True
+
+engine_callback = create_callback(board, update_level, get_monitoring)
+
+audio_stream = AudioStream(engine_callback, config)
+
 def main():
     root = tk.Tk()
     root.title("Tone Assistant LIVE")
@@ -132,8 +133,8 @@ def main():
     def update_vu():
         vu.delete("all")
 
-        level_scaled = min(audio_level * 50, 1.0)
-        width = int(level_scaled * 200)
+        level_scaled = min(audio_level * 5, 1.0)
+        width = int(level_scaled * 200 * 2) # *2 to exagerrate so it moves more
 
         color = "green" if audio_level < 0.9 else "red"
 
