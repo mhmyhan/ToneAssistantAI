@@ -46,19 +46,19 @@ AUDIO_CONFIGS = {
     "safe_mode": {
         "samplerate": 44100,
         "blocksize": 512,
-        "channels": (1, 2),
+        "channels": (2, 2),
         "dtype": "float32"
     },
     "standard": {
         "samplerate": 44100,
         "blocksize": 512,
-        "channels": (1, 2),
+        "channels": (2, 2),
         "dtype": "float32"
     },
     "low_latency": {
         "samplerate": 48000,
         "blocksize": 128,
-        "channels": (1, 2),
+        "channels": (2, 2),
         "dtype": "float32"
     }
 }
