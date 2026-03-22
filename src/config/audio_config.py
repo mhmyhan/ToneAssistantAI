@@ -1,7 +1,6 @@
 # audio system configuration
 
-import sounddevice as sd
-#sd.default.hostapi = 3 # WDM-KS (check this is correct on different systems using sd.query_hostapis())
+#sd.default.hostapi = () # set to ASIO for best performance on Windows
 # check notebooks for quick run
 
 # dynamically find device id based on name
@@ -11,8 +10,8 @@ def find_input_device(device_name):
     devices = sd.query_devices()
     
     for i, device in enumerate(devices):
-        # We check if the name matches and it actually has inputs
-        if device_name in device['name'] and device['max_input_channels'] > 0:
+        hostapi_name = sd.query_hostapis(device['hostapi'])['name']
+        if device_name in device['name'] and "ASIO" in hostapi_name and device['max_input_channels'] > 0:
             return i
 
     # in case of failure, print available devices to terminal for debugging
@@ -25,14 +24,41 @@ def find_output_device(device_name):
     import sounddevice as sd
 
     for i, device in enumerate(sd.query_devices()):
-        hostapi = sd.query_hostapis(device['hostapi'])['name']
-
-        if (
-            device_name in device['name'] and device['max_output_channels'] > 0
-        ):
+        hostapi_name = sd.query_hostapis(device['hostapi'])['name']
+        if device_name in device['name'] and "ASIO" in hostapi_name and device['max_output_channels'] > 0:
             return i
 
     raise ValueError("Output device not found")
+
+
+def find_best_device(device_name, is_input=True):
+    import sounddevice as sd
+    devices = sd.query_devices()
+    
+    # Order of preference for Host APIs
+    # (Best to Worst)
+    api_preference = ["ASIO", "Windows WDM-KS", "Windows WASAPI", "Windows DirectSound", "MME"]
+    
+    found_devices = []
+
+    for i, dev in enumerate(devices):
+        if device_name.upper() in dev['name'].upper():
+            channels = dev['max_input_channels'] if is_input else dev['max_output_channels']
+            if channels > 0:
+                host_api = sd.query_hostapis(dev['hostapi'])['name']
+                found_devices.append({"id": i, "api": host_api})
+
+    if not found_devices:
+        raise ValueError(f"Device '{device_name}' not found at all.")
+
+    # Sort found devices by API preference
+    found_devices.sort(key=lambda x: api_preference.index(x['api']) if x['api'] in api_preference else 99)
+    
+    best_id = found_devices[0]['id']
+    best_api = found_devices[0]['api']
+    
+    print(f"Selected {'Input' if is_input else 'Output'} ID {best_id} ({best_api})")
+    return best_id
 
 ## VARIABLES ##
 
@@ -43,9 +69,10 @@ def find_output_device(device_name):
 
 # prefab configs for easier switching 
 AUDIO_CONFIGS = {
+    # higher latency more stable
     "safe_mode": {
         "samplerate": 44100,
-        "blocksize": 512,
+        "blocksize": 256,
         "channels": (2, 2),
         "dtype": "float32"
     },
@@ -65,11 +92,11 @@ AUDIO_CONFIGS = {
 
 
 SAMPLE_RATE = AUDIO_CONFIGS["safe_mode"]["samplerate"]
-BLOCK_SIZE = AUDIO_CONFIGS["safe_mode"]["blocksize"]
+BLOCK_SIZE = AUDIO_CONFIGS["low_latency"]["blocksize"]
 
 # change to your audio input and output device (see testing.ipynb)
-INPUT_DEVICE_ID = find_input_device("UA-25EX")     # UA-25EX input
-OUTPUT_DEVICE_ID = find_output_device("UA-25EX")   # UA-25EX output
+INPUT_DEVICE_ID = find_best_device("UA-25EX", is_input=True)  # UA-25EX input
+OUTPUT_DEVICE_ID = find_best_device("UA-25EX", is_input=False)  # UA-25EX output
 
 INPUT_CHANNEL = 1 # input 2 (right HighZ channel)
 

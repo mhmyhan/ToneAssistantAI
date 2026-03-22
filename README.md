@@ -19,16 +19,17 @@ python src/dataset_generation/generate_dataset.py
 - check requirements.txt for python packages
 
 ### RUN
-
 Run program UI using:
 
 python run_app.py
 
+---
 
 Run live Pedalboard feed raw using:
 
 python src/live/live_pedalboard.py
 (For debugging audio array processing)
+
 ### Latency
 Ideally runs with a latency < 10ms
 
@@ -36,15 +37,22 @@ Latency is dependent the response period of the processing cycle:
 
 Audio Interface Input -> Pedalboard Processing -> Audio Interface Output
 
-Depending on audio engine used (ASIO for best results)
+Depending on audio hostAPI used (ASIO for best results)
 - block_size (sample size)
   - 256  -> ~6ms
   - 512  -> ~11ms
   - 1024 -> ~23ms
 - Processing
 - sample_rate
-
 Check {src\live\live_pedalboard.py} to make changes
+
+### notes on performance:
+ Roland's UA-25ex drivers provided ([here](https://www.roland.com/global/support/by_product/ua-25ex/updates_drivers/)) are not visible to the sounddevice library, more modern devices may have drivers that make themselves visible, but new audio-interfaces can be very expensive. This puts a bit of a dampener on my ability in the short term to make a proper low latency interface for live audio processing. 
+
+ #### Potential Solutions
+ - Circumvent Sounddevice's reliance on ASIO Host device interfacing
+ - 
+
 
 
 
