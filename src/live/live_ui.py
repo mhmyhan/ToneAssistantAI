@@ -7,6 +7,7 @@ from src.audio.audio_engine import create_callback
 from src.audio.audio_stream import AudioStream
 from src.config.audio_config import (AUDIO_CONFIGS, INPUT_DEVICE_ID, OUTPUT_DEVICE_ID)
 from src.core.shared_state import SharedState
+from src.AI.ai_engine import AIEngine
 
 
 # Audio Level Callback for live vu meter
@@ -20,9 +21,11 @@ def get_monitoring():
 # start and stop button functions
 def start_audio():
     audio_stream.start()
+    ai_engine.start()
 
 def stop_audio():
     audio_stream.stop()
+    ai_engine.stop()
 
 
 
@@ -40,9 +43,16 @@ def toggle_monitoring():
     global monitoring_enabled
     monitoring_enabled = not monitoring_enabled
 
+
+
+########
 ## UI ##
+########
+state = SharedState()
+
 # Build board + pedal references + Callback algorithm
 board, pedals = build_demo_board() # currently hardcoded demo board
+ai_engine = AIEngine(state, pedals)
 
 config = AUDIO_CONFIGS["safe_mode"] # low latency config for live performance
 config["device"] = (INPUT_DEVICE_ID, OUTPUT_DEVICE_ID)
@@ -50,7 +60,6 @@ config["device"] = (INPUT_DEVICE_ID, OUTPUT_DEVICE_ID)
 
 stream = None
 
-state = SharedState()
 
 engine_callback = create_callback(board, update_level, get_monitoring)
 
@@ -69,8 +78,12 @@ def main():
     status_label = tk.Label(root, text="No Signal")
     status_label.pack()
 
+    # AI modifier status label
+    ai_label = tk.Label(root, text="AI: ---")
+    ai_label.pack()
+
     def update_status():
-        if audio_level > 0.01:
+        if state.get_level() > 0.01:
             status_label.config(text="Playing")
         else:
             status_label.config(text="Silence")
@@ -79,6 +92,10 @@ def main():
 
     update_status()
 
+    def update_ai_display():
+        drive, delay = state.get_ai_params()
+        ai_label.config(text=f"AI Drive: {drive:.1f} | Delay: {delay:.2f}")
+        root.after(100, update_ai_display)
 
     # monitoring toggle
     monitor_var = tk.BooleanVar(value=True)
@@ -131,10 +148,10 @@ def main():
     def update_vu():
         vu.delete("all")
 
-        level_scaled = min(audio_level * 5, 1.0)
+        level_scaled = min(state.get_level() * 5, 1.0)
         width = int(level_scaled * 200 * 2) # *2 to exagerrate so it moves more
 
-        color = "green" if audio_level < 0.9 else "red"
+        color = "green" if state.get_level() < 0.9 else "red"
 
         vu.create_rectangle(0, 0, width, 20, fill=color)
 
