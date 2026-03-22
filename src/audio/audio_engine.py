@@ -6,7 +6,10 @@ from src.config.audio_config import SAMPLE_RATE, INPUT_CHANNEL
 
 monitoring_enabled = True # global flag to enable/disable audio monitoring
 
-
+######
+## DO NOT PUT AI PROCESSING INSIDE CALLBACK - It'll cause crashes and audio dropouts. 
+## use shared state to communicate between callback and AI processing loop
+######
 def create_callback(board, level_callback=None, monitor_callback=None):
 
     def audio_callback(indata, outdata, frames, time, status):

@@ -6,15 +6,15 @@ from src.audio.pedalboard_builder import build_demo_board
 from src.audio.audio_engine import create_callback
 from src.audio.audio_stream import AudioStream
 from src.config.audio_config import (AUDIO_CONFIGS, INPUT_DEVICE_ID, OUTPUT_DEVICE_ID)
+from src.core.shared_state import SharedState
 
 
-# Audio Level Callback
+# Audio Level Callback for live vu meter
 def update_level(level):
-    global audio_level
-    audio_level = level
+    state.audio_level = level
 
 def get_monitoring():
-    return monitoring_enabled
+    return state.get_monitoring()
 
 
 # start and stop button functions
@@ -41,18 +41,16 @@ def toggle_monitoring():
     monitoring_enabled = not monitoring_enabled
 
 ## UI ##
-# Build board + pedal references 
+# Build board + pedal references + Callback algorithm
 board, pedals = build_demo_board() # currently hardcoded demo board
 
-config = AUDIO_CONFIGS["safe_mode"]
+config = AUDIO_CONFIGS["safe_mode"] # low latency config for live performance
 config["device"] = (INPUT_DEVICE_ID, OUTPUT_DEVICE_ID)
 
 
 stream = None
 
-# Shared state
-audio_level = 0
-monitoring_enabled = True
+state = SharedState()
 
 engine_callback = create_callback(board, update_level, get_monitoring)
 

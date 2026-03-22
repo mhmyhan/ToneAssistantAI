@@ -51,7 +51,7 @@ Check {src\live\live_pedalboard.py} to make changes
 
  #### Potential Solutions
  - Circumvent Sounddevice's reliance on ASIO Host device interfacing
- - 
+ - Get a new audio interface
 
 
 
