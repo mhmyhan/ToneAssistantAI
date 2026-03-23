@@ -5,3 +5,5 @@ pandas
 soundfile
 tqdm
 sounddevice
+scikit-learn
+lightGBM

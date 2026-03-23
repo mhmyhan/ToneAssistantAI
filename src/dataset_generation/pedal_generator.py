@@ -111,8 +111,8 @@ def generate_parameters(pedal):
     if pedal == "overdrive":
 
         return {
-            "drive": rand.uniform(0.2, 0.8),
-            "tone": rand.uniform(0.3, 0.7)
+            "drive": rand.uniform(0.4, 0.9),  # avoid weak tones
+            "tone": rand.uniform(0.4, 0.7)
         }
 
     if pedal == "chorus":
