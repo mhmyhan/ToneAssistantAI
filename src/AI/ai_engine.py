@@ -42,7 +42,7 @@ class AIEngine:
             self.state.set_ai_params(self.current_drive, self.current_delay)
 
             # Apply to Pedals if AI mode is enabled
-            if self.state.get_ai_mode():
+            if self.state.get_ai_on():
                 self.pedals["distortion"].drive_db = self.current_drive
                 self.pedals["delay"].mix = self.current_delay
 

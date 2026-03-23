@@ -109,7 +109,7 @@ def main():
     ai_var = tk.BooleanVar(value=False)
 
     def toggle_ai():
-        state.set_ai_mode(ai_var.get())
+        state.set_ai_on(ai_var.get())
 
         # gray out sliders when AI is on
         if ai_var.get():
