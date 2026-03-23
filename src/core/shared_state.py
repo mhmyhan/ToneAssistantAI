@@ -7,10 +7,11 @@ class SharedState:
         self.level = 0.0 # for vu meter
         self.monitoring_enabled = True # toggle monitoring
         self.ai_on = False # toggle ai takeover
+        self.ai_params = (0, 0)
         self.ai_mode = "auto" # auto, clean, rock, lead
         self.suggested_drive = 25.0
         self.suggested_delay = 0.3
-        self.features = (0, 0, 0)
+        self.features = None
         
 
     def set_level(self, value):
@@ -57,10 +58,8 @@ class SharedState:
             return self.monitoring_enabled
         
 
-    def set_features(self, rms, centroid, zcr):
-        with self.lock:
-            self.features = (rms, centroid, zcr)
+    def set_features(self, features):
+        self.features = features
 
     def get_features(self):
-        with self.lock:
-            return self.features
+        return self.features

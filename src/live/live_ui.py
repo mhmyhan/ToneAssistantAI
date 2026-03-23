@@ -14,6 +14,10 @@ from src.AI.ai_engine import AIEngine
 def update_level(level):
     state.set_level(level)
 
+# feature callback for live AI manipulation
+def feature_callback(rms, centroid, zcr):
+    state.set_features(rms, centroid, zcr)
+
 def get_monitoring():
     return state.get_monitoring()
 
@@ -63,7 +67,7 @@ config["device"] = (INPUT_DEVICE_ID, OUTPUT_DEVICE_ID)
 stream = None
 
 
-engine_callback = create_callback(board, update_level, get_monitoring)
+engine_callback = create_callback(board, update_level, get_monitoring, feature_callback)
 
 audio_stream = AudioStream(engine_callback, config)
 
