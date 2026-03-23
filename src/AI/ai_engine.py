@@ -6,7 +6,7 @@ class AIEngine:
         self.pedals = pedals
         self.running = False
         
-        # --- Smoothing State ---
+        # Smoothing State
         self.current_drive = 25.0
         self.current_delay = 0.3
         self.smoothing = 0.15  # alpha for smoothness (0.0 - 1.0) lower is slower
@@ -23,28 +23,47 @@ class AIEngine:
     ## Currently working with algorithmic ai, Model implementation to come
     def run(self):
         while self.running:
-            level = self.state.get_level()
+            rms, centroid, zcr = self.state.get_features()
+            mode = self.state.get_ai_mode()
 
-            # Calculate the target pedalstate
-            if level > 0.05:
-                target_drive = min(40, 20 + level * 50)
-                target_delay = min(1.0, 0.2 + level * 0.5)
-            else:
-                target_drive = 10
-                target_delay = 0.1
+            # BASE MODEL (replace with ml)
+            drive = min(40, 10 + rms * 60)
+            delay = min(1.0, 0.1 + rms * 0.6)
 
-            # Apply Smoothing
-            # New Value = Current + (Target - Current) * Alpha
-            self.current_drive += (target_drive - self.current_drive) * self.smoothing
-            self.current_delay += (target_delay - self.current_delay) * self.smoothing
+            # AI Modes
+            if mode == "clean":
+                drive *= 0.5
+                delay *= 0.3
 
-            # Update Shared State (for UI)
+            elif mode == "rock":
+                drive *= 1.2
+                delay *= 0.5
+
+            elif mode == "lead":
+                drive *= 1.5
+                delay *= 1.2
+
+            elif mode == "auto":
+                # use spectral info
+                if centroid > 2000:  # bright signal
+                    drive *= 1.3
+                if zcr > 0.1:
+                    delay *= 0.7
+
+            # clamp values
+            drive = max(0, min(40, drive))
+            delay = max(0, min(1.0, delay))
+
+            # smoothing
+            self.current_drive += (drive - self.current_drive) * self.smoothing
+            self.current_delay += (delay - self.current_delay) * self.smoothing
+
+            # update state
             self.state.set_ai_params(self.current_drive, self.current_delay)
 
-            # Apply to Pedals if AI mode is enabled
-            if self.state.get_ai_on():
+            # apply if enabled
+            if self.state.get_ai_on() and self.state.get_ai_mode() != "manual":
                 self.pedals["distortion"].drive_db = self.current_drive
                 self.pedals["delay"].mix = self.current_delay
 
-            # Run at 20Hz (0.05s) for smooth transitions
             time.sleep(0.05)

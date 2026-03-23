@@ -45,6 +45,8 @@ def toggle_monitoring():
 
 
 
+
+
 ########
 ## UI ##
 ########
@@ -68,24 +70,13 @@ audio_stream = AudioStream(engine_callback, config)
 def main():
     root = tk.Tk()
     root.title("Tone Assistant LIVE")
+    mode_var = tk.StringVar(value="auto")
 
     # defining UI elements
     tk.Label(root, text="Tone Assistant", font=("Arial", 16)).pack()
     tk.Button(root, text="Start", command=start_audio).pack()
     tk.Button(root, text="Stop", command=stop_audio).pack()
 
-    ## Define Sldiers
-    # Distortion
-    drive_slider = tk.Scale(root, from_=0, to=40, label="Distortion Drive (dB)",
-                            orient=tk.HORIZONTAL, command=set_drive)
-    drive_slider.set(25)
-    drive_slider.pack()
-
-    # Delay
-    delay_slider = tk.Scale(root, from_=0, to=1, resolution=0.01, label="Delay Mix",
-                            orient=tk.HORIZONTAL, command=set_delay_mix)
-    delay_slider.set(0.3)
-    delay_slider.pack()
 
 
     # audio status label
@@ -108,6 +99,18 @@ def main():
 
     ai_var = tk.BooleanVar(value=False)
 
+    def change_mode(value):
+        state.set_ai_mode(value)
+        # turn ai button "on" when the user picks a mode
+        # or "off" if they select manual
+        if value == "manual":
+            ai_var.set(False)
+        else:
+            ai_var.set(True)
+        toggle_ai() # Trigger the gray-out logic
+
+    tk.OptionMenu(root, mode_var, "manual", "auto", "clean", "rock", "lead", command=change_mode).pack()
+
     def toggle_ai():
         state.set_ai_on(ai_var.get())
 
@@ -122,6 +125,19 @@ def main():
     ai_checkbox = tk.Checkbutton(root, text="AI Auto-Tone", variable=ai_var, 
                                  command=toggle_ai, font=("Arial", 10, "bold"), fg="blue")
     ai_checkbox.pack(pady=10)
+
+    ## Define Sldiers
+    # Distortion
+    drive_slider = tk.Scale(root, from_=0, to=40, label="Distortion Drive (dB)",
+                            orient=tk.HORIZONTAL, command=set_drive)
+    drive_slider.set(25)
+    drive_slider.pack()
+
+    # Delay
+    delay_slider = tk.Scale(root, from_=0, to=1, resolution=0.01, label="Delay Mix",
+                            orient=tk.HORIZONTAL, command=set_delay_mix)
+    delay_slider.set(0.3)
+    delay_slider.pack()
 
     def update_ai_display():
         drive, delay = state.get_ai_params()
