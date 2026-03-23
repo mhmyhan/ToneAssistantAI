@@ -73,7 +73,7 @@ AUDIO_CONFIGS = {
     # higher latency more stable
     "safe_mode": {
         "samplerate": 44100,
-        "blocksize": 64,
+        "blocksize": 124,
         "channels": (2, 2),
         "dtype": "float32"
     },

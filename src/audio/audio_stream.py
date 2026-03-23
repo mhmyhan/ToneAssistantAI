@@ -21,7 +21,7 @@ class AudioStream:
         extra_settings = None
         if "WASAPI" in self.host_api:
             print("Enabling WASAPI Exclusive Mode...")
-            extra_settings = sd.WasapiSettings(exclusive=True)
+            extra_settings = sd.WasapiSettings(exclusive=False)
 
         self.stream = sd.Stream(
             samplerate=self.config["samplerate"],
