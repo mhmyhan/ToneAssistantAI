@@ -51,6 +51,7 @@ Check {src\live\live_pedalboard.py} to make changes
 
  #### Potential Solutions
  - Circumvent Sounddevice's reliance on ASIO Host device interfacing
+ - WASAPI; Forces exclusivity but low latency
  - Get a new audio interface
 
 

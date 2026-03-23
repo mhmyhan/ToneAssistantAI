@@ -8,6 +8,7 @@ from src.audio.audio_stream import AudioStream
 from src.config.audio_config import (AUDIO_CONFIGS, INPUT_DEVICE_ID, OUTPUT_DEVICE_ID, HOST_API_NAME)
 from src.core.shared_state import SharedState
 from src.AI.ai_engine import AIEngine
+from src.config.presets import PRESETS
 
 
 # Audio Level Callback for live vu meter
@@ -46,7 +47,6 @@ def set_delay_mix(value):
 def toggle_monitoring():
     global monitoring_enabled
     monitoring_enabled = not monitoring_enabled
-
 
 
 
@@ -105,13 +105,14 @@ def main():
 
     def change_mode(value):
         state.set_ai_mode(value)
-        # turn ai button "on" when the user picks a mode
-        # or "off" if they select manual
+
         if value == "manual":
             ai_var.set(False)
         else:
             ai_var.set(True)
-        toggle_ai() # Trigger the gray-out logic
+            apply_preset(value)
+
+        toggle_ai()
 
     tk.OptionMenu(root, mode_var, "manual", "auto", "clean", "rock", "lead", command=change_mode).pack()
 
@@ -142,6 +143,28 @@ def main():
                             orient=tk.HORIZONTAL, command=set_delay_mix)
     delay_slider.set(0.3)
     delay_slider.pack()
+
+    def apply_preset(name):
+        preset = PRESETS.get(name)
+        if not preset:
+            return
+
+        if "distortion" in pedals:
+            pedals["distortion"].drive_db = preset["drive"]
+
+        if "delay" in pedals:
+            pedals["delay"].mix = preset["delay_mix"]
+            pedals["delay"].feedback = preset["delay_feedback"]
+
+        if "pre_gain" in pedals:
+            pedals["pre_gain"].gain_db = preset["pre_gain"]
+
+        if "post_gain" in pedals:
+            pedals["post_gain"].gain_db = preset["post_gain"]
+
+        # update UI sliders to match preset
+        drive_slider.set(preset["drive"])
+        delay_slider.set(preset["delay_mix"])
 
     def update_ai_display():
         drive, delay = state.get_ai_params()

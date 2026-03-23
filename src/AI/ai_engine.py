@@ -24,14 +24,14 @@ class AIEngine:
         self.running = False
 
     def loop(self):
+        from src.config.presets import PRESETS
+
         while self.running:
 
-            # run if AI is enabled
             if not self.state.get_ai_on():
                 time.sleep(0.1)
                 continue
 
-            # Get latest features from shared state
             features = self.state.get_features()
 
             if features is None:
@@ -40,27 +40,69 @@ class AIEngine:
 
             rms, centroid, zcr = features
 
-            # generate predictions from features
+            # Get current mode + preset
+            mode = self.state.get_ai_mode()
+            preset = PRESETS.get(mode, PRESETS["clean"])
+
+            base_drive = preset["drive"]
+            base_delay = preset["delay_mix"]
+
+            # AI prediction
             pred = predict_params(rms, centroid, zcr)
-            print(f"RAW PRED: {pred}")
+            # pred = [0.5 + random.uniform(-0.1, 0.1), 0.5 + random.uniform(-0.1, 0.1)] ##DEBUG
 
-            # clamp values 
-            target_drive = np.interp(pred[0], [0, 1], [5, 30])
-            target_delay_mix = np.interp(pred[1], [0, 1], [0.1, 0.6])
+            # Convert prediction into deviation from center
+            ai_drive_offset = np.tanh(pred[0]) * 6
+            ai_delay_offset = np.tanh(pred[1]) * 0.1
 
-            target_drive += random.uniform(-0.5, 0.5)
-            target_delay_mix += random.uniform(-0.02, 0.02)
 
-            # apply to pedals if AI mode is active
-            if self.state.get_ai_on():
-                if "distortion" in self.pedals:
-                    self.pedals["distortion"].drive_db = target_drive
 
-                if "delay" in self.pedals:
-                    self.pedals["delay"].mix = target_delay_mix
-                    self.pedals["delay"].feedback = 0.5
+            # minimise influence of nosy predictions
+            if abs(pred[0] - 0.5) < 0.05:
+                ai_drive_offset = 0
 
-                # Update UI display with the actual values being used
-                self.state.set_ai_params(target_drive, target_delay_mix)
+            if abs(pred[1] - 0.5) < 0.05:
+                ai_delay_offset = 0
 
-            time.sleep(0.1)  # 10Hz update rate
+
+            # Combine preset + AI
+            target_drive = base_drive + ai_drive_offset
+            target_delay_mix = base_delay + ai_delay_offset
+
+            # Clamp safely
+            target_drive = max(0, min(target_drive, 40))
+            target_delay_mix = max(0.05, min(target_delay_mix, 0.8))
+
+            # React to playing dynamics
+            target_drive *= (1 + rms * 2.5)
+            target_delay_mix *= (1 - rms * 0.7)
+            target_drive += random.uniform(-0.3, 0.3)
+            target_delay_mix += random.uniform(-0.01, 0.01)
+
+            # smoothing
+            prev_drive, prev_delay = self.state.get_ai_params()
+
+            alpha = 0.1 + (rms * 0.2)  # smoothing factor (0 = frozen, 1 = instant)
+
+            # final Clamp
+            target_drive = max(3, min(target_drive, 40))
+            target_delay_mix = max(0.05, min(target_delay_mix, 0.8))
+
+
+            print(f"PRED: {pred} | DRIVE: {target_drive:.2f} | DELAY: {target_delay_mix:.2f}")
+
+            target_drive = prev_drive + alpha * (target_drive - prev_drive)
+            target_delay_mix = prev_delay + alpha * (target_delay_mix - prev_delay)
+
+            # Apply to pedals
+            if "distortion" in self.pedals:
+                self.pedals["distortion"].drive_db = target_drive
+
+            if "delay" in self.pedals:
+                self.pedals["delay"].mix = target_delay_mix
+                self.pedals["delay"].feedback = preset["delay_feedback"]
+
+            # Store for UI
+            self.state.set_ai_params(target_drive, target_delay_mix)
+
+            time.sleep(0.1)

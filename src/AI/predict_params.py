@@ -15,4 +15,11 @@ def predict_params(rms, centroid, zcr):
         "zcr": zcr
     }])
 
-    return model.predict(features)[0]
+    pred_full = model.predict(features)[0]
+
+    # Extract only what we need
+    drive = pred_full[22]
+    delay = pred_full[29]
+
+    return [drive, delay]
+
