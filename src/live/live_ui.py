@@ -74,6 +74,20 @@ def main():
     tk.Button(root, text="Start", command=start_audio).pack()
     tk.Button(root, text="Stop", command=stop_audio).pack()
 
+    ## Define Sldiers
+    # Distortion
+    drive_slider = tk.Scale(root, from_=0, to=40, label="Distortion Drive (dB)",
+                            orient=tk.HORIZONTAL, command=set_drive)
+    drive_slider.set(25)
+    drive_slider.pack()
+
+    # Delay
+    delay_slider = tk.Scale(root, from_=0, to=1, resolution=0.01, label="Delay Mix",
+                            orient=tk.HORIZONTAL, command=set_delay_mix)
+    delay_slider.set(0.3)
+    delay_slider.pack()
+
+
     # audio status label
     status_label = tk.Label(root, text="No Signal")
     status_label.pack()
@@ -105,14 +119,8 @@ def main():
             drive_slider.config(state="normal")
             delay_slider.config(state="normal")
 
-    ai_checkbox = tk.Checkbutton(
-        root,
-        text="AI Auto-Tone",
-        variable=ai_var,
-        command=toggle_ai,
-        font=("Arial", 10, "bold"),
-        fg="blue"
-    )
+    ai_checkbox = tk.Checkbutton(root, text="AI Auto-Tone", variable=ai_var, 
+                                 command=toggle_ai, font=("Arial", 10, "bold"), fg="blue")
     ai_checkbox.pack(pady=10)
 
     def update_ai_display():
@@ -136,30 +144,6 @@ def main():
     monitor_checkbox.pack()
 
 
-    # Distortion
-    drive_slider = tk.Scale(
-        root,
-        from_=0,
-        to=40,
-        label="Distortion Drive (dB)",
-        orient=tk.HORIZONTAL,
-        command=set_drive
-    )
-    drive_slider.set(25)
-    drive_slider.pack()
-
-    # Delay
-    delay_slider = tk.Scale(
-        root,
-        from_=0,
-        to=1,
-        resolution=0.01,
-        label="Delay Mix",
-        orient=tk.HORIZONTAL,
-        command=set_delay_mix
-    )
-    delay_slider.set(0.3)
-    delay_slider.pack()
 
     # VU Meter
     tk.Label(root, text="Input Level").pack()
