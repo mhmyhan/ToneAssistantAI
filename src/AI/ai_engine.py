@@ -1,5 +1,7 @@
 import threading
 import time
+import numpy as np
+import random
 from src.AI.predict_params import predict_params
 
 
@@ -40,10 +42,14 @@ class AIEngine:
 
             # generate predictions from features
             pred = predict_params(rms, centroid, zcr)
+            print(f"RAW PRED: {pred}")
 
             # clamp values 
-            target_drive = max(0, min(pred[0], 1)) * 30 # 23rd column is overdrive_drive
-            target_delay_mix = max(0.05, min(pred[1], 0.6)) # 31st column in csv is delay_mix
+            target_drive = np.interp(pred[0], [0, 1], [5, 30])
+            target_delay_mix = np.interp(pred[1], [0, 1], [0.1, 0.6])
+
+            target_drive += random.uniform(-0.5, 0.5)
+            target_delay_mix += random.uniform(-0.02, 0.02)
 
             # apply to pedals if AI mode is active
             if self.state.get_ai_on():
