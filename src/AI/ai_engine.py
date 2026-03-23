@@ -30,7 +30,8 @@ class AIEngine:
             self.state.set_ai_params(drive, delay)
 
             # directly control pedals fr debugging
-            self.pedals["distortion"].drive_db = drive
-            self.pedals["delay"].mix = delay
+            if self.state.get_ai_mode():
+                self.pedals["distortion"].drive_db = drive
+                self.pedals["delay"].mix = delay
 
             time.sleep(0.1)  # 10Hz update rate provide room for 

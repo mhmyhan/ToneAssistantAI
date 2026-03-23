@@ -12,7 +12,7 @@ from src.AI.ai_engine import AIEngine
 
 # Audio Level Callback for live vu meter
 def update_level(level):
-    state.audio_level = level
+    state.set_level(level)
 
 def get_monitoring():
     return state.get_monitoring()
@@ -69,8 +69,8 @@ def main():
     root = tk.Tk()
     root.title("Tone Assistant LIVE")
 
+    # defining UI elements
     tk.Label(root, text="Tone Assistant", font=("Arial", 16)).pack()
-
     tk.Button(root, text="Start", command=start_audio).pack()
     tk.Button(root, text="Stop", command=stop_audio).pack()
 
@@ -92,6 +92,29 @@ def main():
 
     update_status()
 
+    ai_var = tk.BooleanVar(value=False)
+
+    def toggle_ai():
+        state.set_ai_mode(ai_var.get())
+
+        # gray out sliders when AI is on
+        if ai_var.get():
+            drive_slider.config(state="disabled")
+            delay_slider.config(state="disabled")
+        else:
+            drive_slider.config(state="normal")
+            delay_slider.config(state="normal")
+
+    ai_checkbox = tk.Checkbutton(
+        root,
+        text="AI Auto-Tone",
+        variable=ai_var,
+        command=toggle_ai,
+        font=("Arial", 10, "bold"),
+        fg="blue"
+    )
+    ai_checkbox.pack(pady=10)
+
     def update_ai_display():
         drive, delay = state.get_ai_params()
         ai_label.config(text=f"AI Drive: {drive:.1f} | Delay: {delay:.2f}")
@@ -101,8 +124,7 @@ def main():
     monitor_var = tk.BooleanVar(value=True)
 
     def update_monitoring():
-        global monitoring_enabled
-        monitoring_enabled = monitor_var.get()
+        state.set_monitoring(monitor_var.get())
 
     monitor_checkbox = tk.Checkbutton(
         root,
@@ -158,6 +180,7 @@ def main():
         root.after(50, update_vu)
 
     update_vu()
+    update_ai_display()
  
     root.mainloop()
 
