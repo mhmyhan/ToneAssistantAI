@@ -6,11 +6,24 @@ from src.config.audio_config import SAMPLE_RATE, INPUT_CHANNEL
 
 monitoring_enabled = True # global flag to enable/disable audio monitoring
 
+def extract_features(signal):
+    rms = np.sqrt(np.mean(signal**2))
+    
+    # simple spectral centroid (calculates brightness)
+    spectrum = np.abs(np.fft.rfft(signal))
+    freqs = np.fft.rfftfreq(len(signal), d=1/SAMPLE_RATE)
+    centroid = np.sum(freqs * spectrum) / (np.sum(spectrum) + 1e-6)
+
+    # zero crossing rate
+    zcr = np.mean(np.abs(np.diff(np.sign(signal)))) / 2
+
+    return rms, centroid, zcr
+
 ######
 ## DO NOT PUT AI PROCESSING INSIDE CALLBACK - It'll cause crashes and audio dropouts. 
 ## use shared state to communicate between callback and AI processing loop
 ######
-def create_callback(board, level_callback=None, monitor_callback=None):
+def create_callback(board, level_callback=None, monitor_callback=None, feature_callback=None):
 
     def audio_callback(indata, outdata, frames, time, status):
 
@@ -22,10 +35,13 @@ def create_callback(board, level_callback=None, monitor_callback=None):
         channel = indata[:, INPUT_CHANNEL].copy() # high-z input on UA-25EX is input 2 (right) which is index 1, but this can be changed in config
 
         # Calculate RMS level for VU monitoring
-        level = np.sqrt(np.mean(channel**2))
+        rms, centroid, zcr = extract_features(channel)
 
         if level_callback:
-            level_callback(level)
+            level_callback(rms)
+
+        if feature_callback:
+            feature_callback(rms, centroid, zcr)
 
         # pedalboard expects (num_channels, num_samples)
         audio = channel.reshape(1, -1)
