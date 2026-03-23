@@ -7,15 +7,21 @@ class BaseAudioBackend:
 
 # This class centralises audio stream management, allowing for easy start/stop UI integration
 class AudioStream:
-    def __init__(self, callback, config, monitor_callback=None):
+    def __init__(self, callback, config, monitor_callback=None, host_api="Windows WASAPI"):
         self.callback = callback
         self.config = config
         self.monitor_callback = monitor_callback
         self.stream = None
+        self.host_api = host_api
 
     def start(self):
         if self.stream is not None:
             return
+        
+        extra_settings = None
+        if "WASAPI" in self.host_api:
+            print("Enabling WASAPI Exclusive Mode...")
+            extra_settings = sd.WasapiSettings(exclusive=True)
 
         self.stream = sd.Stream(
             samplerate=self.config["samplerate"],
@@ -23,7 +29,8 @@ class AudioStream:
             device=self.config["device"],
             channels=self.config["channels"],
             dtype=self.config["dtype"],
-            callback=self.callback
+            callback=self.callback,
+            extra_settings=extra_settings
         )
 
         self.stream.start()

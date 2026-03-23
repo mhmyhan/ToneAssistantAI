@@ -5,7 +5,7 @@ import tkinter as tk
 from src.audio.pedalboard_builder import build_demo_board
 from src.audio.audio_engine import create_callback
 from src.audio.audio_stream import AudioStream
-from src.config.audio_config import (AUDIO_CONFIGS, INPUT_DEVICE_ID, OUTPUT_DEVICE_ID)
+from src.config.audio_config import (AUDIO_CONFIGS, INPUT_DEVICE_ID, OUTPUT_DEVICE_ID, HOST_API_NAME)
 from src.core.shared_state import SharedState
 from src.AI.ai_engine import AIEngine
 
@@ -69,7 +69,7 @@ stream = None
 
 engine_callback = create_callback(board, update_level, get_monitoring, feature_callback)
 
-audio_stream = AudioStream(engine_callback, config)
+audio_stream = AudioStream(engine_callback, config, host_api=HOST_API_NAME)
 
 def main():
     root = tk.Tk()
