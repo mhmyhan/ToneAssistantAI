@@ -14,7 +14,7 @@ OUTPUT_FOLDER = "data/generated/audio"
 LABEL_FILE = "data/labels/dataset_labels.csv"
 
 #less samples for testing(5), change to ~100-400 for model training
-SAMPLES_PER_RIFF = 400
+SAMPLES_PER_RIFF = 500
 
 ## FUNC ##
 def process_audio(input_file, output_file, effects):

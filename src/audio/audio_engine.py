@@ -1,5 +1,6 @@
 import numpy as np
 from src.config.audio_config import SAMPLE_RATE, INPUT_CHANNEL
+from pedalboard import Pedalboard, Distortion, Delay
 
 
 # Callback function that processes audio through pedalboard in realtime
@@ -19,12 +20,23 @@ def extract_features(signal):
 
     return rms, centroid, zcr
 
-######
-## DO NOT PUT AI PROCESSING INSIDE CALLBACK - It'll cause crashes and audio dropouts. 
-## use shared state to communicate between callback and AI processing loop
-######
+def update_board_from_prediction(pred):
+    
+    # map to columns in the training CSV
+    drive = pred[0]
+    delay_mix = pred[1]
+
+    return Pedalboard([
+        Distortion(drive_db=drive * 30),
+        Delay(mix=delay_mix)
+    ])
+
 def create_callback(board, level_callback=None, monitor_callback=None, feature_callback=None):
 
+    ######
+    ## DO NOT PUT AI PROCESSING INSIDE CALLBACK - It'll cause crashes and audio dropouts. 
+    ## use shared state to communicate between callback and AI processing loop
+    ######
     def audio_callback(indata, outdata, frames, time, status):
 
         if status:
