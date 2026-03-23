@@ -92,7 +92,7 @@ AUDIO_CONFIGS = {
 
 
 SAMPLE_RATE = AUDIO_CONFIGS["safe_mode"]["samplerate"]
-BLOCK_SIZE = AUDIO_CONFIGS["low_latency"]["blocksize"]
+BLOCK_SIZE = AUDIO_CONFIGS["safe_mode"]["blocksize"]
 
 # change to your audio input and output device (see testing.ipynb)
 INPUT_DEVICE_ID = find_best_device("UA-25EX", is_input=True)  # UA-25EX input

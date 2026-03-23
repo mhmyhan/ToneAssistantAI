@@ -42,8 +42,8 @@ class AIEngine:
             pred = predict_params(rms, centroid, zcr)
 
             # clamp values 
-            drive = max(0, min(pred[23], 1)) # 23rd column is overdrive_drive
-            delay_mix = max(0, min(pred[31], 1)) # 31st column in csv is delay_mix
+            drive = max(0, min(pred[0], 1)) # 23rd column is overdrive_drive
+            delay_mix = max(0, min(pred[1], 1)) # 31st column in csv is delay_mix
 
             # apply to pedals
             if "distortion" in self.pedals:

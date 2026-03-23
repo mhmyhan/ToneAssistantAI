@@ -58,8 +58,10 @@ class SharedState:
             return self.monitoring_enabled
         
 
-    def set_features(self, features):
-        self.features = features
+    def set_features(self, rms, centroid, zcr):
+        with self.lock:
+            self.features = (rms, centroid, zcr)
 
     def get_features(self):
-        return self.features
+        with self.lock:
+            return self.features
