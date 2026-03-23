@@ -42,17 +42,19 @@ class AIEngine:
             pred = predict_params(rms, centroid, zcr)
 
             # clamp values 
-            drive = max(0, min(pred[0], 1)) # 23rd column is overdrive_drive
-            delay_mix = max(0, min(pred[1], 1)) # 31st column in csv is delay_mix
+            target_drive = max(0, min(pred[0], 1)) * 30 # 23rd column is overdrive_drive
+            target_delay_mix = max(0.05, min(pred[1], 0.6)) # 31st column in csv is delay_mix
 
-            # apply to pedals
-            if "distortion" in self.pedals:
-                self.pedals["distortion"].drive_db = drive * 30
+            # apply to pedals if AI mode is active
+            if self.state.get_ai_on():
+                if "distortion" in self.pedals:
+                    self.pedals["distortion"].drive_db = target_drive
 
-            if "delay" in self.pedals:
-                self.pedals["delay"].mix = delay_mix
+                if "delay" in self.pedals:
+                    self.pedals["delay"].mix = target_delay_mix
+                    self.pedals["delay"].feedback = 0.5
 
-            # Update UI display
-            self.state.set_ai_params(drive * 30, delay_mix)
+                # Update UI display with the actual values being used
+                self.state.set_ai_params(target_drive, target_delay_mix)
 
             time.sleep(0.1)  # 10Hz update rate

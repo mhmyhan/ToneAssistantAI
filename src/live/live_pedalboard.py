@@ -9,7 +9,8 @@ from src.config.audio_config import SAMPLE_RATE, BLOCK_SIZE, INPUT_DEVICE_ID, OU
 print("Initialising live...")
 
 # create callback function for processing audio from template in audio_engine.py
-audio_callback = create_callback(build_demo_board())
+board, pedals = build_demo_board()
+audio_callback = create_callback(board)
 
 with sd.Stream(
     samplerate=SAMPLE_RATE,

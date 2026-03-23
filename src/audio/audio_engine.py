@@ -57,7 +57,7 @@ def create_callback(board, level_callback=None, monitor_callback=None, feature_c
 
         # pedalboard expects (num_channels, num_samples)
         audio = channel.reshape(1, -1)
-        processed = board(audio, SAMPLE_RATE)
+        processed = board(audio, SAMPLE_RATE, reset=False)
 
         # processed audio is float32 and reshaped for stereo output
         # outdata shape is (samples, 2)
