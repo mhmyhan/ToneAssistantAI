@@ -1,2 +1,15 @@
 data/generated/audio
 ARES.txt
+src/audio/__pycache__/audio_engine.cpython-313.pyc
+src/AI/__pycache__/ai_engine.cpython-314.pyc
+src/AI/__pycache__/predict_params.cpython-314.pyc
+src/audio/__pycache__/__init__.cpython-314.pyc
+src/audio/__pycache__/audio_engine.cpython-314.pyc
+src/audio/__pycache__/audio_stream.cpython-314.pyc
+src/audio/__pycache__/pedalboard_builder.cpython-314.pyc
+src/config/__pycache__/__init__.cpython-314.pyc
+src/config/__pycache__/audio_config.cpython-314.pyc
+src/config/__pycache__/presets.cpython-314.pyc
+src/core/__pycache__/shared_state.cpython-314.pyc
+src/live/__pycache__/__init__.cpython-314.pyc
+src/live/__pycache__/live_ui.cpython-314.pyc
